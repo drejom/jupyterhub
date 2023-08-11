@@ -1,0 +1,13 @@
+name: base
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - jupyterhub=4.0.1 
+  - dockerspawner
+  - jupyterhub-idle-culler
+  - pip
+
+# Pip packages
+  - pip:
+      - jupyterhub-nativeauthenticator
