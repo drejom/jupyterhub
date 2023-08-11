@@ -14,20 +14,26 @@ Tag a new version to trigger GitHub Actions to build & push a new image to GitHu
 ## Run locally
 
 ```sh
+docker volume create workbench
+docker network create workbench
+
 docker run -it --rm -p 8000:8000 \
     -e DOCKER_NETWORK_NAME=workbench \
     -e DOCKER_NOTEBOOK_IMAGE=jupyter/minimal-notebook \
     -e DOCKER_NOTEBOOK_DIR=/home/jovyan \
     -e DOCKER_SPAWN_CMD=start-singleuser.sh \
     -e JUPYTERHUB_ADMIN=${USER} \
-    -v jupyterhub_data:/data \
+    -v workbench:/data:rw \
     -v /var/run/docker.sock:/var/run/docker.sock \
     --name jupyterhub \
+    --network workbench \
     ghcr.io/drejom/jupyterhub:latest
 
-# Mount to ovveride default
+# Mount to override default
 # -v /opt/workbench/jupyterhub/jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py 
-
+# Remove when done
+docker volume rm workbench
+docker network rm workbench
 ```
 
 ## Roadmap
@@ -45,8 +51,8 @@ docker run -it --rm -p 8000:8000 \
 
 ## Further reading and inspo
 
-    [Setup on a RPi](https://towardsdatascience.com/setup-your-home-jupyterhub-on-a-raspberry-pi-7ad32e20eed)
+[Setup on a RPi](https://towardsdatascience.com/setup-your-home-jupyterhub-on-a-raspberry-pi-7ad32e20eed)
 
-    [Setup NGNIX proxy](https://hands-on.cloud/nginx-jupyter-proxy-example/)
- 
-    [Medium-scale JupyterHub deployments](https://opendreamkit.org/2018/10/17/jupyterhub-docker/) (with Traefik)
+[Setup NGNIX proxy](https://hands-on.cloud/nginx-jupyter-proxy-example/)
+
+[Medium-scale JupyterHub deployments](https://opendreamkit.org/2018/10/17/jupyterhub-docker/) (with Traefik)

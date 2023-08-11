@@ -1,7 +1,7 @@
 
 FROM mambaorg/micromamba:latest AS base
 
-# Default jupyterhub_config.py
+# Copy the default jupyterhub_config.py
 COPY jupyterhub_config.py /srv/jupyterhub/jupyterhub_config.py
 
 # Copy the environment.yml file to the Docker container
@@ -11,6 +11,8 @@ COPY environment.yml /tmp/
 COPY --chown=$MAMBA_USER:$MAMBA_USER environment.yml /tmp/environment.yml
 RUN micromamba install -y -n base -f /tmp/environment.yml && \
     micromamba clean --all --yes
+
+RUN mkdir -m 755 /data
 
 WORKDIR /srv/jupyterhub
 
