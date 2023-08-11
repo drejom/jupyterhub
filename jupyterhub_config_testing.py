@@ -43,8 +43,7 @@ c.DockerSpawner.notebook_dir = notebook_dir
 # Mount the real user's Docker volume on the host to the notebook user's
 # notebook directory in the container
 c.DockerSpawner.volumes = {
-    "jupyterhub-user-{username}": notebook_dir,
-    "/opt/workbench/jupyterhub/shared": f"{notebook_dir}/shared"
+    "jupyterhub-user-{username}": notebook_dir
     # Add more mounts as needed
 }
 

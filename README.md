@@ -23,14 +23,13 @@ docker run -it --rm -p 8000:8000 \
     -e DOCKER_NOTEBOOK_DIR=/home/jovyan \
     -e DOCKER_SPAWN_CMD=start-singleuser.sh \
     -e JUPYTERHUB_ADMIN=${USER} \
-    -v workbench:/data:rw \
+    -v workbench:/data \
+    -v ./jupyterhub_config_testing.py:/srv/jupyterhub/jupyterhub_config_testing.py \
     -v /var/run/docker.sock:/var/run/docker.sock \
     --name jupyterhub \
     --network workbench \
     ghcr.io/drejom/jupyterhub:latest
 
-# Mount to override default
-# -v /opt/workbench/jupyterhub/jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py 
 # Remove when done
 docker volume rm workbench
 docker network rm workbench
