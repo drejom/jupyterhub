@@ -108,6 +108,3 @@ c.JupyterHub.services = [
 
 # Disable user configuration of containers
 c.DockerSpawner.disable_user_config = True
-
-# Serve via the subpath /jupyterhub
-c.JupyterHub.base_url = '/jupyterhub'

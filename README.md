@@ -30,6 +30,7 @@ docker run -it --rm -p 8000:8000 \
     --network workbench \
     ghcr.io/drejom/jupyterhub:latest
 
+
 # Remove when done
 docker volume rm workbench
 docker network rm workbench
