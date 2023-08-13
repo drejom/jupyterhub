@@ -11,9 +11,6 @@ c = get_config()
 # avoid having to rebuild the JupyterHub container every time we change a
 # configuration parameter.
 
-c.JupyterHub.hub_ip = '0.0.0.0'  # listen on all interfaces
-c.JupyterHub.hub_connect_ip = 'jupyterhub'  # IP as seen on the docker network. Can also be a hostname.
-
 # Spawn single-user servers as Docker containers
 c.JupyterHub.spawner_class = "dockerspawner.DockerSpawner"
 
@@ -58,6 +55,9 @@ c.DockerSpawner.debug = True
 # User containers will access hub by container name on the Docker network
 c.JupyterHub.hub_ip = "jupyterhub"
 c.JupyterHub.hub_port = 8080
+
+# IP as seen on the docker network. Can also be a hostname.
+c.JupyterHub.hub_connect_ip = 'jupyterhub'  
 
 # Persist hub data on volume mounted inside container
 c.JupyterHub.cookie_secret_file = "/data/jupyterhub_cookie_secret"
