@@ -11,9 +11,6 @@ c = get_config()
 # avoid having to rebuild the JupyterHub container every time we change a
 # configuration parameter.
 
-c.JupyterHub.hub_ip = '0.0.0.0'  # listen on all interfaces
-c.JupyterHub.hub_connect_ip = 'jupyterhub'  # IP as seen on the docker network. Can also be a hostname.
-
 # Spawn single-user servers as Docker containers
 c.JupyterHub.spawner_class = "dockerspawner.DockerSpawner"
 
@@ -44,7 +41,7 @@ c.DockerSpawner.notebook_dir = notebook_dir
 # notebook directory in the container
 c.DockerSpawner.volumes = {
     "jupyterhub-user-{username}": notebook_dir,
-    "workbench/home": f"{notebook_dir}/shared"
+    "jupyterhub": f"{notebook_dir}/shared"
 
     # Add more mounts as needed
 }
@@ -58,6 +55,7 @@ c.DockerSpawner.debug = True
 # User containers will access hub by container name on the Docker network
 c.JupyterHub.hub_ip = "jupyterhub"
 c.JupyterHub.hub_port = 8080
+c.JupyterHub.hub_connect_ip = 'jupyterhub'  
 
 # Persist hub data on volume mounted inside container
 c.JupyterHub.cookie_secret_file = "/data/jupyterhub_cookie_secret"
@@ -89,7 +87,6 @@ c.JupyterHub.load_roles = [
             "read:users:activity",
             "read:servers",
             "delete:servers"
-#            "admin:users",  # if using --cull-users
         ],
         # assignment of role's permissions to:
         "services": ["jupyterhub-idle-culler-service"],
@@ -110,5 +107,4 @@ c.JupyterHub.services = [
 # Disable user configuration of containers
 c.DockerSpawner.disable_user_config = True
 
-# Serve via the subpath /jupyterhub
-c.JupyterHub.base_url = '/jupyterhub'
+

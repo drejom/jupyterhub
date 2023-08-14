@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+
+  jupyterhub:
+    image: ghcr.io/drejom/jupyterhub:latest
+    container_name: jupyterhub
+    restart: unless-stopped
+    networks:
+      - jupyterhub
+    ports:
+      - 8000:8000
+    environment:
+      DOCKER_NETWORK_NAME: jupyterhub
+      DOCKER_NOTEBOOK_IMAGE: jupyter/minimal-notebook #ghcr.io/drejom/vscode-rbioc:latest
+      DOCKER_NOTEBOOK_DIR: /home/jovyan
+      DOCKER_SPAWN_CMD: start-singleuser.sh
+      JUPYTERHUB_ADMIN: domeally
+    volumes:
+      - jupyterhub:/data
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+      - ./jupyterhub_config_testing.py:/srv/jupyterhub/jupyterhub_config.py:rw
+
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - jupyterhub:/etc/nginx/conf.d
+      - jupyterhub:/usr/share/nginx/html
+    networks:
+      - jupyterhub
+
+networks:
+  jupyterhub:
+    name: jupyterhub
+    driver: bridge
+
+volumes:
+  jupyterhub:
+    name: jupyterhub

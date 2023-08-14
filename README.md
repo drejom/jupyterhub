@@ -14,8 +14,16 @@ Tag a new version to trigger GitHub Actions to build & push a new image to GitHu
 ## Run locally
 
 ```sh
+docker-compose up -d
+docker-compose down
+```
+
+Or 
+
+```sh
 docker volume create workbench
 docker network create workbench
+
 
 docker run -it --rm -p 8000:8000 \
     -e DOCKER_NETWORK_NAME=workbench \
@@ -42,6 +50,7 @@ docker network rm workbench
 - dashboards
 - launch other services via hub (eg llm apps)
   - jupyter-server-proxy
+    - H2O LLM Studio
     - Memgraph (https://medium.com/memgraph/memgraph-lab-2-5-0-is-out-232228bb6187)
     - code https://github.com/seblum/jupyterhub-server-image/tree/main
     - code, pluto, docserver, bookserver
