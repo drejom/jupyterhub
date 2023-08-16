@@ -14,6 +14,7 @@ Tag a new version to trigger GitHub Actions to build & push a new image to GitHu
 ## Run locally
 
 ```sh
+docker build . -t ghcr.io/drejom/jupyterhub:latest
 docker-compose up -d
 docker-compose down
 ```
@@ -45,8 +46,10 @@ docker network rm workbench
 ```
 
 ## Roadmap
+
+- fix native authenticator
 - ssh spawner
-- slurm spawner
+- Slurm spawner
 - dashboards
 - launch other services via hub (eg llm apps)
   - jupyter-server-proxy

@@ -12,9 +12,9 @@ services:
       - 8000:8000
     environment:
       DOCKER_NETWORK_NAME: jupyterhub
-      DOCKER_NOTEBOOK_IMAGE: jupyter/minimal-notebook #ghcr.io/drejom/vscode-rbioc:latest
+      DOCKER_NOTEBOOK_IMAGE: ghcr.io/drejom/vscode-rbioc:latest #jupyter/minimal-notebook
       DOCKER_NOTEBOOK_DIR: /home/jovyan
-      DOCKER_SPAWN_CMD: start-singleuser.sh
+      DOCKER_SPAWN_CMD: jupyterhub-singleuser
       JUPYTERHUB_ADMIN: domeally
     volumes:
       - jupyterhub:/data
