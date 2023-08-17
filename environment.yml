@@ -2,12 +2,14 @@ name: base
 channels:
   - conda-forge
 dependencies:
-  - python=3.10
+  - python=3.11
   - jupyterhub=4.0.2 
-  - dockerspawner
-  - jupyterhub-idle-culler
   - pip
 
 # Pip packages
   - pip:
-      - jupyterhub-nativeauthenticator
+    - jupyterhub-nativeauthenticator
+    - dockerspawner
+    - wrapspawner
+    - batchspawner
+    - jupyterhub-idle-culler
