@@ -48,6 +48,7 @@ docker network rm workbench
 ## Roadmap
 
 - fix native authenticator
+- traefik proxy
 - ssh spawner
 - Slurm spawner
 - dashboards

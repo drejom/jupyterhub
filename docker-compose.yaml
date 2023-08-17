@@ -19,7 +19,7 @@ services:
     volumes:
       - jupyterhub:/data
       - /var/run/docker.sock:/var/run/docker.sock:rw
-      - ./jupyterhub_config_testing.py:/srv/jupyterhub/jupyterhub_config.py:rw
+      - ./jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py:rw
 
   nginx:
     container_name: nginx
