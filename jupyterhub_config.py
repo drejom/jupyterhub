@@ -107,4 +107,4 @@ c.JupyterHub.services = [
 ]
 
 # Disable user configuration of containers
-c.DockerSpawner.disable_user_config = True
+c.DockerSpawner.disable_user_config = False
