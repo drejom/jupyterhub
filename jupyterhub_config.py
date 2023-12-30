@@ -3,76 +3,28 @@
 
 # Configuration file for JupyterHub
 import os
-import sys
 
-
-c = get_config()
+c = get_config()  # noqa: F821
 
 # We rely on environment variables to configure JupyterHub so that we
 # avoid having to rebuild the JupyterHub container every time we change a
 # configuration parameter.
 
-# Spawn single-user servers as Docker containers
-c.JupyterHub.spawner_class = "dockerspawner.DockerSpawner"
-
-# Spawn containers from this image
-c.DockerSpawner.image = os.environ["DOCKER_NOTEBOOK_IMAGE"]
-c.DockerSpawner.host_ip = '0.0.0.0'
-
-# JupyterHub requires individual instances of Notebook server,
-# therefore we use `start-singleuser.sh` script from the jupyter/docker-stacks,
-# as the Docker run command.
-# The environment variable DOCKER_SPAWN_CMD can also be used to override.
-spawn_cmd = os.environ.get("DOCKER_SPAWN_CMD", "start-singleuser.sh")
-c.DockerSpawner.cmd = spawn_cmd
-
-# Connect containers to this Docker network
-network_name = os.environ["DOCKER_NETWORK_NAME"]
-c.DockerSpawner.use_internal_ip = True
-c.DockerSpawner.network_name = network_name
-
-# Set the notebook directory explicitly to mount a volume.
-# The jupyter/docker-stacks images run the Notebook server with `jovyan` user and notebook directory as `/home/jovyan/work`.
-# Following the same naming convention.
-notebook_dir = os.environ.get("DOCKER_NOTEBOOK_DIR", "/home/jovyan/work")
-host_shared_dir = '/opt/workbench/jupyterhub/shared' 
-docker_shared_vol = 'jupyterhub'
-shared_mount = {}
-c.DockerSpawner.notebook_dir = notebook_dir
-
-# Determine which volume to share
-# If `host_shared_dir` exists, we use it; otherwise, we fall back to Docker's shared volume.
-if os.path.exists(host_shared_dir):
-    shared_mount[host_shared_dir] = f"{notebook_dir}/shared" 
-else:
-    shared_mount[docker_shared_vol] = f"{notebook_dir}/shared"
-
-# Mount user's Docker volume from the host to user's notebook directory in the container
-c.DockerSpawner.volumes = {
-    "jupyterhub-user-{username}": notebook_dir,
-    **shared_mount  
-}
-
-
-# Remove containers once they are stopped
-c.DockerSpawner.remove = True
-
-# For debugging arguments passed to spawned containers
-c.DockerSpawner.debug = True
+# Jupyterhub ------------------------------------------------------------------
+c.JupyterHub.allow_named_servers = True
 
 # User containers will access hub by container name on the Docker network
 c.JupyterHub.hub_ip = "jupyterhub"
 c.JupyterHub.hub_port = 8080
 
-# IP as seen on the docker network. Can also be a hostname.
-c.JupyterHub.hub_connect_ip = 'jupyterhub'  
-
+# Database -----------------------------------------------------------------
 # Persist hub data on volume mounted inside container
-c.JupyterHub.cookie_secret_file = "/data/jupyterhub_cookie_secret"
-c.JupyterHub.db_url = "sqlite:////data/jupyterhub.sqlite"
+c.JupyterHub.cookie_secret_file = "/srv/jupyterhub/jupyterhub_cookie_secret"
+c.JupyterHub.db_url = "sqlite:////srv/jupyterhub/jupyterhub.sqlite"
 
+# Authenticator -----------------------------------------------------------
 # Authenticate users with Native Authenticator
-c.JupyterHub.authenticator_class = "native"
+c.JupyterHub.authenticator_class = "nativeauthenticator.NativeAuthenticator"
 
 # Allow anyone to sign-up without approval
 c.NativeAuthenticator.open_signup = True
@@ -80,39 +32,50 @@ c.NativeAuthenticator.open_signup = True
 # Allowed admins
 admin = os.environ.get("JUPYTERHUB_ADMIN")
 if admin:
-    c.Authenticator.admin_users = ['admin']
+    c.Authenticator.admin_users = [admin]
 
-# Setup for ngnix
-c.JupyterHub.bind_url = 'http://:8000'
+# Spawner ----------------------------------------------------------------
+# Dont let users modify config - can interfere with DockerSpawner
+c.Spawner.disable_user_config = True
+# Spawn single-user servers as Docker containers
+c.JupyterHub.spawner_class = "dockerspawner.DockerSpawner"
 
-# Redirect to JupyterLab, instead of the plain Jupyter notebook
-c.Spawner.default_url = '/lab'
-
-# JupiterHub idle culler
-c.JupyterHub.load_roles = [
-    {
-        "name": "jupyterhub-idle-culler-role",
-        "scopes": [
-            "list:users",
-            "read:users:activity",
-            "read:servers",
-            "delete:servers"
-        ],
-        # assignment of role's permissions to:
-        "services": ["jupyterhub-idle-culler-service"],
+# Spawn containers from this image
+c.DockerSpawner.image = os.environ["DOCKER_NOTEBOOK_IMAGE"]
+# Define allowed images
+c.DockerSpawner.allowed_images = {
+    'JupyterLab Minimal': c.DockerSpawner.image,
+    'JupyterLab Data Science': 'quay.io/jupyter/datascience-notebook:latest',
+    'JupyterLab SoS': 'ghcr.io/drejom/jupyterlab-sos:latest'
     }
-]
 
-c.JupyterHub.services = [
-    {
-        "name": "jupyterhub-idle-culler-service",
-        "command": [
-            sys.executable,
-            "-m", "jupyterhub_idle_culler",
-            "--timeout=3600",
-        ]
-    }
-]
+# Container name template
+c.DockerSpawner.name_template = "{prefix}-{username}-{imagename}-{servername}"
 
-# Disable user configuration of containers
-c.DockerSpawner.disable_user_config = False
+# Connect containers to this Docker network
+network_name = os.environ["DOCKER_NETWORK_NAME"]
+c.DockerSpawner.use_internal_ip = True
+c.DockerSpawner.network_name = network_name
+
+# Explicitly set notebook directory because we'll be mounting a volume to it.
+# Most `jupyter/docker-stacks` *-notebook images run the Notebook server as
+# user `jovyan`, and set the notebook directory to `/home/jovyan/work`.
+# We follow the same convention.
+notebook_dir = os.environ.get("DOCKER_NOTEBOOK_DIR", "/home/jovyan/work")
+c.DockerSpawner.notebook_dir = notebook_dir
+
+# Mount the real user's Docker volume on the host to the notebook user's
+# notebook directory in the container
+c.DockerSpawner.volumes = {"jupyterhub-user-{username}": notebook_dir}
+
+# Remove containers once they are stopped
+c.DockerSpawner.remove = True
+
+# For debugging arguments passed to spawned containers
+c.DockerSpawner.debug = True
+
+# environment variables
+c.DockerSpawner.environment = {
+    'OPENAI_API_KEY': 'your_actual_api_key_here',
+    'ANOTHER_VARIABLE': 'value'
+}
