@@ -1,23 +1,15 @@
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
+ARG JUPYTERHUB_VERSION=4.0.2
+FROM quay.io/jupyterhub/jupyterhub:$JUPYTERHUB_VERSION
 
-FROM mambaorg/micromamba:latest AS base
+# hadolint ignore=DL3013
+RUN python3 -m pip install --no-cache-dir \
+    dockerspawner \
+    jupyterhub-nativeauthenticator \
+    jupyterhub-idle-culler \
+    jupyter-server-proxy \
+    wrapspawner \
+    https://github.com/jupyterhub/batchspawner/archive/main.zip
 
-USER root
-
-# Copy the default jupyterhub_config.py
-COPY jupyterhub_config.py /srv/jupyterhub/jupyterhub_config.py
-
-# Copy the environment.yml file to the Docker container
-COPY environment.yml /tmp/
-
-# Use mamba to update the base environment
-COPY --chown=$MAMBA_USER:$MAMBA_USER environment.yml /tmp/environment.yml
-RUN micromamba install -y -n base -f /tmp/environment.yml && \
-    micromamba clean --all --yes
-
-RUN mkdir /data
-
-WORKDIR /srv/jupyterhub
-
-EXPOSE 8000
-
-CMD ["jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py" ]
+CMD ["jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py"]
