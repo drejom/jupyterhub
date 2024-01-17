@@ -61,6 +61,7 @@ docker network rm workbench
            https://github.com/Rahuketu86/RemoteConnect
     - OpenVINO for Intel GPU
     - vLLM https://vllm.readthedocs.io/
+    - [bia-bob](https://github.com/haesleinhuepf/bia-bob?tab=readme-ov-file#no-code-custom-jupyter-kernel)
 
 ## Further reading and inspo
 
