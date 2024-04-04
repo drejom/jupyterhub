@@ -16,8 +16,8 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py39_${MINICONDA
 COPY environment.yml /app/environment.yml
 WORKDIR /app
 
-# Create the environment from the merged environment.yml
-RUN conda env create -f environment.yml
+# Update the environment from the merged environment.yml
+RUN conda env update -n base -f environment.yml
 
 # Ensure the environment is activated
 SHELL ["conda", "run", "-n", "base", "/bin/bash", "-c"]
