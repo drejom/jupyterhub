@@ -3,7 +3,7 @@ channels:
   - conda-forge
 dependencies:
   - python=3.11
-  - jupyterhub=4.0.2 
+  - jupyterhub=4.1.5
   - pip
 
 # Pip packages
@@ -13,3 +13,4 @@ dependencies:
     - wrapspawner
     - batchspawner
     - jupyterhub-idle-culler
+    - pyenv

@@ -1,6 +1,6 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-ARG JUPYTERHUB_VERSION=4.0.2
+ARG JUPYTERHUB_VERSION=4.1.5
 FROM quay.io/jupyterhub/jupyterhub:$JUPYTERHUB_VERSION
 
 # hadolint ignore=DL3013
