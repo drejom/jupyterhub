@@ -14,3 +14,4 @@ dependencies:
     - batchspawner
     - jupyterhub-idle-culler
     - pyenv
+    - jupyterhub-ldapauthenticator
