@@ -2,8 +2,8 @@ name: base
 channels:
   - conda-forge
 dependencies:
-  - python=3.11
-  - jupyterhub=4.1.5
+  - python=3.12
+  - jupyterhub=4.1.4
   - pip
 
 # Pip packages
