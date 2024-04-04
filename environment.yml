@@ -4,7 +4,6 @@ channels:
 dependencies:
   - python=3.12
   - jupyterhub=4.1.4
-  - pyenv
   - pip
 
 # Pip packages
