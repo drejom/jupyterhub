@@ -1,7 +1,4 @@
-version: "3.9"
-
 services:
-
   jupyterhub:
     image: ghcr.io/drejom/jupyterhub:latest
     container_name: jupyterhub
@@ -17,10 +14,9 @@ services:
       DOCKER_SPAWN_CMD: start-singleuser.sh #start-singleuser.sh #/opt/conda/bin/jupyterhub-singleuser
       JUPYTERHUB_ADMIN: domeally
     volumes:
-      - jupyterhub:/data
+      - /mnt/media/jupyterhub/data:/data
       - /var/run/docker.sock:/var/run/docker.sock:rw
       - ./jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py:rw
-
   nginx:
     container_name: nginx
     image: nginx:latest
@@ -28,8 +24,8 @@ services:
     ports:
       - "80:80"
     volumes:
-      - jupyterhub:/etc/nginx/conf.d
-      - jupyterhub:/usr/share/nginx/html
+      - ./nginx.d:/etc/nginx/conf.d
+      - /mnt/media/jupyterhub/nginx/html:/usr/share/nginx/html
     networks:
       - jupyterhub
 
@@ -37,7 +33,3 @@ networks:
   jupyterhub:
     name: jupyterhub
     driver: bridge
-
-volumes:
-  jupyterhub:
-    name: jupyterhub
